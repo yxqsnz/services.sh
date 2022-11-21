@@ -54,6 +54,8 @@ _start() {
 }
 
 _kill() {
+	internal.Prepare
+
 	if file.Exists "$UNIT_PATH/$1"; then
 		source "${UNIT_PATH}/$1"
 		PID_FILE="$PID_PATH/$NAME.pid"
@@ -75,6 +77,8 @@ _kill() {
 }
 
 _cat() {
+	internal.Prepare
+
 	if file.Exists "$UNIT_PATH/$1"; then
 		source "${UNIT_PATH}/$1"
 		LOG_FILE="$LOGS_PATH/$NAME.log"
@@ -89,6 +93,8 @@ _cat() {
 }
 
 _stat() {
+	internal.Prepare
+
 	if file.Exists "$UNIT_PATH/$1"; then
 		source "${UNIT_PATH}/$1"
 		echo "${NAME} - ${DESCRIPTION}"
@@ -122,7 +128,7 @@ _stat() {
 	fi
 }
 
-case ""$1 in
+case "$1" in
 start) shift && _start "$@" ;;
 kill) shift && _kill "$@" ;;
 cat) shift && _cat "$@" ;;
