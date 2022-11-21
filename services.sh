@@ -1,10 +1,11 @@
 #!/bin/bash
-VERSION="0.1.0"
+VERSION="0.2.0"
 AUTHORS="yxqsnz"
 BASE_PATH="${HOME}/.services"
 UNIT_PATH="${BASE_PATH}/units"
 PID_PATH="${BASE_PATH}/pids"
 LOGS_PATH="${BASE_PATH}/logs"
+shopt -s nullglob
 
 file.Exists() {
 	[[ -f $1 ]] || [[ -d $1 ]] || readlink "$1" >/dev/null
@@ -95,6 +96,21 @@ _cat() {
 _stat() {
 	internal.Prepare
 
+	if [ "$1" = "" ]; then
+
+		for file in "$PID_PATH"/*.pid; do
+			PID=$(cat "$file")
+
+			if process.isAlive "$PID"; then
+				echo "Alive: ${PID}"
+			else
+				echo "Died: $PID}"
+			fi
+
+		done
+		return 0
+	fi
+
 	if file.Exists "$UNIT_PATH/$1"; then
 		source "${UNIT_PATH}/$1"
 		echo "${NAME} - ${DESCRIPTION}"
@@ -134,11 +150,11 @@ kill) shift && _kill "$@" ;;
 cat) shift && _cat "$@" ;;
 stat) shift && _stat "$@" ;;
 *)
-	echo "services - ""$VERSION"
-	echo "by ""$AUTHORS"
+	echo "services - $VERSION"
+	echo "by $AUTHORS"
 	echo "Pid Path: ""$PID_PATH"
-	echo "Unit Path: ""$UNIT_PATH"
-	echo "Base Path: ""$BASE_PATH"
+	echo "Unit Path: $UNIT_PATH"
+	echo "Base Path: $BASE_PATH"
 	echo "USAGE:"
 	echo "  kill  <UNIT NAME> - kill a service"
 	echo "  start <UNIT NAME> - start a service"
